@@ -1,0 +1,17 @@
+worker_app: "synapse.app.generic_worker"
+worker_name: "client2"
+
+# The replication listener on the main synapse process.
+worker_replication_host: 127.0.0.1
+worker_replication_http_port: 9090
+
+worker_listeners:
+  #  - bind_address: "127.0.0.1"
+  - type: http
+    port: 9092
+    resources:
+      - names:
+        - client
+
+
+worker_log_config: /data/workers/client2.log.config

@@ -1,0 +1,88 @@
+modules:
+  - module: "synapse_auto_accept_invite.InviteAutoAccepter"
+    config: {}
+
+  - module: "synapse_auto_invite_space_rooms.InviteSpaceRooms"
+    config: {}
+  
+  - module: "synapse_auto_kick_space_rooms.KickSpaceRooms"
+    config: {}
+  - module: "synapse_auto_send_events.AutoSendEvents"
+    config: {}
+
+password_providers:
+  - module: "rest_auth_provider.RestAuthProvider"
+    config:
+      endpoint: "https://test.local"
+      policy:
+        registration:
+          profile:
+            name: true
+        login:
+          profile:
+            name: true
+        all:
+          threepid:
+            update: false
+            replace: false
+
+server_name: "matrix.local"
+
+pid_file: /data/homeserver.pid
+signing_key_path: "/data/matrix.signed.key"
+
+
+# Allow configuring in case we want to reverse proxy 8008
+# using another process in the same container
+- port: 8080
+  tls: false
+  bind_addresses: ['::']
+  type: http
+  x_forwarded: true
+  resources:
+    - names: [client]
+      compress: true
+
+
+database:
+  name: psycopg2
+  txn_limit: 10000
+  args:
+    user: xxx
+    password: xxx
+    database: xxx
+    host: xxx
+    port: 5432
+    cp_min: 5
+    cp_max: 10
+
+
+macaroon_secret_key: "ETtS9&7HTPmrtOvef.u&XbhRP8=v^tT+mq4*==f8~f~osWA.*6"
+form_secret: "ETtS9&7HTPmrtOvef.u&XbhRP8=v^tT+mq4*==f8~f~osWA.*6"
+
+trusted_key_servers:
+  - server_name: "localhost:8008"
+
+log_config: "/data/matrix.local.log.config"
+media_store_path: "/data/media_store"
+
+report_stats: false
+federation_domain_whitelist:
+
+enable_registration: false
+registration_shared_secret: test
+
+retention:
+  enabled: true
+
+  default_policy:
+    max_lifetime: 1y
+
+  allowed_lifetime_min: 1d
+
+  purge_jobs:
+    - shortest_max_lifetime: 1d
+      interval: 1d 
+
+    - longest_max_lifetime: 30d
+      interval: 1d 

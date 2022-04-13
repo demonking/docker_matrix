@@ -1,0 +1,63 @@
+server_name: "matrix.local"
+
+pid_file: /data/homeserver.pid
+signing_key_path: "/data/matrix.signed.key"
+
+
+# Allow configuring in case we want to reverse proxy 8008
+# using another process in the same container
+listeners:
+  - port: 8080
+    tls: false
+    bind_addresses: ['127.0.0.1']
+    type: http
+    x_forwarded: false
+    resources:
+      - names: [client]
+        compress: true
+          
+database:
+  name: "sqlite3"
+  args:
+    database: "/data/homeserver.db"
+ #database:
+ #  name: psycopg2
+ #  txn_limit: 10000
+ #  args:
+ #    user: synapse_user
+ #    password: tester1234
+ #    database: synapse
+ #    host: localhost
+ #    port: 5432
+ #    cp_min: 5
+ #    cp_max: 10
+
+macaroon_secret_key: "ETtS9&7HTPmrtOvef.u&XbhRP8=v^tT+mq4*==f8~f~osWA.*6"
+form_secret: "ETtS9&7HTPmrtOvef.u&XbhRP8=v^tT+mq4*==f8~f~osWA.*6"
+
+trusted_key_servers:
+  - server_name: "localhost:8008"
+
+log_config: "/data/matrix.local.log.config"
+media_store_path: "/data/media_store"
+
+report_stats: false
+federation_domain_whitelist:
+
+enable_registration: true
+registration_shared_secret: tester1234
+
+retention:
+  enabled: true
+
+  default_policy:
+    max_lifetime: 1y
+
+  allowed_lifetime_min: 1d
+
+  purge_jobs:
+    - shortest_max_lifetime: 1d
+      interval: 1d 
+
+    - longest_max_lifetime: 30d
+      interval: 1d 
